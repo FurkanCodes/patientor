@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Table, Button, TableHead, Typography, TableCell, TableRow, TableBody } from '@mui/material';
+import { Box, Table, Button, TableHead, Typography, TableCell, TableRow, TableBody, Tab } from '@mui/material';
 import axios from 'axios';
 
 import { PatientFormValues, Patient } from "../../types";
@@ -8,14 +8,15 @@ import AddPatientModal from "../AddPatientModal";
 import HealthRatingBar from "../HealthRatingBar";
 
 import patientService from "../../services/patients";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
-  patients : Patient[]
+  patients: Patient[]
   setPatients: React.Dispatch<React.SetStateAction<Patient[]>>
 }
 
-const PatientListPage = ({ patients, setPatients } : Props ) => {
-
+const PatientListPage = ({ patients, setPatients }: Props) => {
+  let navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [error, setError] = useState<string>();
 
@@ -54,7 +55,15 @@ const PatientListPage = ({ patients, setPatients } : Props ) => {
           Patient list
         </Typography>
       </Box>
-      <Table style={{ marginBottom: "1em" }}>
+
+
+      <Table style={{ marginBottom: "1em" }} sx={{
+        "& .MuiTableRow-root:hover": {
+          backgroundColor: "primary.light",
+          cursor: "pointer"
+        }
+      }}>
+
         <TableHead>
           <TableRow>
             <TableCell>Name</TableCell>
@@ -63,10 +72,11 @@ const PatientListPage = ({ patients, setPatients } : Props ) => {
             <TableCell>Health Rating</TableCell>
           </TableRow>
         </TableHead>
+
         <TableBody>
           {Object.values(patients).map((patient: Patient) => (
-            <TableRow key={patient.id}>
-              <TableCell>{patient.name}</TableCell>
+            <TableRow onClick={() => { navigate(`/patients/${patient.id}`) }} key={patient.id}>
+              <TableCell >{patient.name}</TableCell>
               <TableCell>{patient.gender}</TableCell>
               <TableCell>{patient.occupation}</TableCell>
               <TableCell>
