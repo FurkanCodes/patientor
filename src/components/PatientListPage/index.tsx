@@ -9,6 +9,7 @@ import HealthRatingBar from "../HealthRatingBar";
 
 import patientService from "../../services/patients";
 import { useNavigate } from "react-router-dom";
+import { Entry } from "../../types";
 
 interface Props {
   patients: Patient[]
@@ -74,15 +75,19 @@ const PatientListPage = ({ patients, setPatients }: Props) => {
         </TableHead>
 
         <TableBody>
-          {Object.values(patients).map((patient: Patient) => (
-            <TableRow onClick={() => { navigate(`/patients/${patient.id}`) }} key={patient.id}>
-              <TableCell >{patient.name}</TableCell>
+          {patients.map((patient: Patient) => (
+            <TableRow key={patient.id} onClick={() => navigate(`/patients/${patient.id}`)}>
+              <TableCell>{patient.name}</TableCell>
               <TableCell>{patient.gender}</TableCell>
               <TableCell>{patient.occupation}</TableCell>
+              <TableCell>{patient.occupation}</TableCell>
+
               <TableCell>
                 <HealthRatingBar showText={false} rating={1} />
               </TableCell>
+
             </TableRow>
+
           ))}
         </TableBody>
       </Table>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Patient } from '../types';
+import { Entry, Patient } from '../types';
 import patients from '../services/patients';
 import MaleIcon from '@mui/icons-material/Male';
 import { Female } from '@mui/icons-material';
@@ -50,14 +50,20 @@ const PatientDetail: React.FC = () => {
                                 </TableCell>
                                 <TableCell>   <p> {patient.gender === "male" ? <MaleIcon /> : <Female />}</p></TableCell>
                             </TableRow>
+
+                            {patient.entries.map((entry: Entry) => (
+                                <TableRow key={entry.id}>
+                                    <TableCell colSpan={4}>
+                                        <Typography>
+                                            Date: {entry.date}<br />
+                                            Description: {entry.description}<br />
+                                            Diagnose Codes: {entry.diagnosisCodes ? entry.diagnosisCodes.join(', ') : 'N/A'}
+                                        </Typography>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
                         </TableBody>
                     </Table>
-
-
-
-
-
-
                 </div>
             )}
         </div>
