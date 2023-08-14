@@ -16,6 +16,7 @@ const create = async (object: PatientFormValues) => {
     `${apiBaseUrl}/patients`,
     object
   );
+  console.log(object)
 
   return data;
 };
@@ -25,6 +26,7 @@ const getOnePatient = async (id: string) => {
     `${apiBaseUrl}/patients/${id}`,
   )
   const patientData = data;
+
   return patientData;
 }
 

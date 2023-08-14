@@ -5,8 +5,13 @@ import patients from '../services/patients';
 import MaleIcon from '@mui/icons-material/Male';
 import { Female } from '@mui/icons-material';
 import { Box, Table, Button, TableHead, Typography, TableCell, TableRow, TableBody, Tab } from '@mui/material';
-import axios from 'axios';
-const PatientDetail: React.FC = () => {
+import PatientDetail from './PatientDetails';
+
+interface EntryDetailsProps {
+    entry: Entry; // Make sure you have this prop in the type
+}
+
+const PatientInfo: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const [patient, setPatient] = useState<Patient | null>(null);
 
@@ -49,19 +54,16 @@ const PatientDetail: React.FC = () => {
                                 <TableCell>   <p> {patient.occupation}</p>
                                 </TableCell>
                                 <TableCell>   <p> {patient.gender === "male" ? <MaleIcon /> : <Female />}</p></TableCell>
-                            </TableRow>
 
+                            </TableRow>
                             {patient.entries.map((entry: Entry) => (
                                 <TableRow key={entry.id}>
                                     <TableCell colSpan={4}>
-                                        <Typography>
-                                            Date: {entry.date}<br />
-                                            Description: {entry.description}<br />
-                                            Diagnose Codes: {entry.diagnosisCodes ? entry.diagnosisCodes.join(', ') : 'N/A'}
-                                        </Typography>
+                                        <PatientDetail entry={entry} />
                                     </TableCell>
                                 </TableRow>
                             ))}
+
                         </TableBody>
                     </Table>
                 </div>
@@ -72,4 +74,4 @@ const PatientDetail: React.FC = () => {
 };
 
 
-export default PatientDetail
+export default PatientInfo
