@@ -6,10 +6,9 @@ import MaleIcon from '@mui/icons-material/Male';
 import { Female } from '@mui/icons-material';
 import { Box, Table, Button, TableHead, Typography, TableCell, TableRow, TableBody, Tab } from '@mui/material';
 import PatientDetail from './PatientDetails';
+import AddEntryForm from './AddEntryForm';
 
-interface EntryDetailsProps {
-    entry: Entry; // Make sure you have this prop in the type
-}
+
 
 const PatientInfo: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -29,6 +28,15 @@ const PatientInfo: React.FC = () => {
             fetchPatient();
         }
     }, [id]);
+
+    const handleAddEntry = (newEntry: Entry) => {
+        // Ensure that the new entry is an object of type Entry
+        if (patient) {
+            const updatedEntries = [...patient.entries, newEntry];
+            const updatedPatient = { ...patient, entries: updatedEntries };
+            setPatient(updatedPatient);
+        }
+    };
     return (
         <div>
             {!patient ? (
@@ -66,6 +74,7 @@ const PatientInfo: React.FC = () => {
 
                         </TableBody>
                     </Table>
+
                 </div>
             )}
         </div>

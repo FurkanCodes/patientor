@@ -13,7 +13,7 @@ import { v4 as uuidv4 } from 'uuid'; // Import v4 as uuidv4
 
 interface Props {
   onCancel: () => void;
-  onSubmit: (values: PatientFormValues) => void;
+  onSubmit: (values: PatientFormValues) => any;
 }
 
 interface GenderOption {
@@ -35,7 +35,13 @@ const AddPatientForm = ({ onCancel, onSubmit }: Props) => {
   const [date, setDate] = useState("");
   const [diagnosisCode, setDiagnosisCode] = useState("");
   const [description, setDescription] = useState("");
+  const [specialist, setSpecialist] = useState("");
   const [entryDetails, setEntryDetails] = useState<Entry[]>([]);
+  const [healthRate, setHealthRate] = useState<HealthCheckRating>(0)
+  const [error, setError] = useState<string | null>(null); // State for error message
+  const [success, setSuccess] = useState(false); // State for success message
+  const [dateError, setDateError] = useState<string | null>(null);
+
 
   const onGenderChange = (event: SelectChangeEvent<string>) => {
     event.preventDefault();
@@ -47,21 +53,45 @@ const AddPatientForm = ({ onCancel, onSubmit }: Props) => {
       }
     }
   };
+  const validateDate = (inputDate: string) => {
+    const currentDate = new Date();
+    const enteredDate = new Date(inputDate);
+    if (enteredDate > currentDate) {
+      setDateError("Date cannot be in the future");
+      return false;
+    }
+
+    setDateError(null);
+    return true;
+  };
+
+
 
   const addEntry = () => {
+
+    if (healthRate > 3) {
+
+      setError("Health Rate must be 3 or less.");
+
+    }
     const newEntry: Entry = {
       date,
       description,
-      diagnosisCodes: [diagnosisCode], // Assuming you have only one diagnosis code for simplicity
-      specialist: "",
+      diagnosisCodes: [diagnosisCode],
+      specialist: specialist,
       type: "HealthCheck",
-      healthCheckRating: HealthCheckRating.LowRisk, // Provide a default rating
+      healthCheckRating: healthRate, // Provide a default rating
       id: uuidv4(), // Generate a unique ID for the entry
     };
+
+
     setEntryDetails([...entryDetails, newEntry]);
     setDate("");
     setDescription("");
     setDiagnosisCode("");
+    setHealthRate(0); // Reset healthRate to default value
+    setError(null); // Clear any previous errors
+
   };
 
   const addPatient = (event: SyntheticEvent) => {
@@ -74,13 +104,15 @@ const AddPatientForm = ({ onCancel, onSubmit }: Props) => {
       gender,
       entries: entryDetails,
     };
-
     onSubmit(newPatient);
+
   };
 
   return (
     <div>
       <form onSubmit={addPatient}>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {success && <p style={{ color: 'green' }}>Patient data submitted successfully!</p>}
         <TextField
           label="Name"
           fullWidth
@@ -123,8 +155,14 @@ const AddPatientForm = ({ onCancel, onSubmit }: Props) => {
         <TextField
           label="Entry Date"
           fullWidth
+          type="date"
           value={date}
-          onChange={({ target }) => setDate(target.value)}
+          onChange={({ target }) => {
+            setDate(target.value);
+            setDateError(null); // Clear error when input changes
+          }}
+          error={dateError !== null}
+          helperText={dateError}
         />
         <TextField
           label="Entry Diagnosis Code"
@@ -138,6 +176,21 @@ const AddPatientForm = ({ onCancel, onSubmit }: Props) => {
           value={description}
           onChange={({ target }) => setDescription(target.value)}
         />
+        <TextField
+          label="Enter Specialist Name"
+          fullWidth
+          value={specialist}
+          onChange={({ target }) => setSpecialist(target.value)}
+        />
+
+        <TextField
+          label="Health Rate"
+          fullWidth
+          value={healthRate}
+          onChange={({ target }) => setHealthRate(parseInt(target.value))}
+          type="number"
+        />
+
 
         <Grid>
           <Grid item>
